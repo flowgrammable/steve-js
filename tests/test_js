@@ -1,0 +1,41 @@
+(function() {
+
+'use strict';
+
+var p = require('./lib/index');
+
+var lib = p.Library();
+
+lib.defineProtocol({
+  name: 'Ethernet',
+  symbols: {
+    src: null,
+    dst: null,
+    type: null
+  }
+});
+
+lib.defineProtocol({
+  name: 'VLAN',
+  symbols: {
+    id:       null,
+    priority: null,
+    type:     null
+  }
+});
+
+lib.defineProtocol({
+  name: 'IPv4',
+  symbols: {
+    protocol: null,
+    src: null,
+    dst: null
+  }
+});
+
+lib.encap('Ethernet', 'VLAN', p.Equal(p.Name('Ethernet.type'), 0x8100));
+lib.encap('Ethernet', 'IPv4', p.Equal(p.Name('Ethernet.type'), 0x0800));
+lib.encap('VLAN',     'VLAN', p.Equal(p.Name('VLAN.type'),     0x8100));
+lib.encap('VLAN',     'IPv4', p.Equal(p.Name('VLAN.type'),     0x0800));
+
+})();
